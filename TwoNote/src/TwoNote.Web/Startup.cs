@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using TwoNote.Core.Interfaces;
+using TwoNote.Infrastructure.Data;
 
 namespace TwoNote.Web
 {
@@ -21,7 +20,13 @@ namespace TwoNote.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc();
+            services.AddMvc()
+                .AddControllersAsServices();
+
+            services.AddDbContext<TwoNote.Infrastructure.Data.TwoNoteContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            
+            // Register dependencies. 
+            services.AddScoped(typeof(IRepository<>), typeof(EfGenericRepository<>));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

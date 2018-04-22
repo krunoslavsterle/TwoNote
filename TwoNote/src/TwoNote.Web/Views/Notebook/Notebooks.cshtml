@@ -1,0 +1,20 @@
+﻿@{
+    ViewData["Title"] = "Notebooks";
+}
+
+@model IEnumerable<TwoNote.Core.Entities.NotebookEntity>
+
+<div>
+    <h1>List of notebooks:</h1>
+
+    <ul>
+        @foreach (var notebook in Model)
+        {
+           <li>
+               <a asp-area="" asp-controller="Notebook" asp-action="Pages" asp-route-notebookId="@notebook.Id">@notebook.Name</a>
+           </li>
+        }
+    </ul>
+
+    
+</div>
