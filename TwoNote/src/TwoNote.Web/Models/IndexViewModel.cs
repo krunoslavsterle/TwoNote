@@ -1,9 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace TwoNote.Web.Models
 {
     public class IndexViewModel
     {
-        IEnumerable<NotebookViewModel> Notebooks { get; set; }
+        public IndexViewModel()
+        {
+            Notebooks = new List<NotebookViewModel>();
+        }
+
+        public Guid? SelectedNotebookId { get; set; }
+        public IEnumerable<NotebookViewModel> Notebooks { get; set; }
     }
 }

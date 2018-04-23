@@ -1,0 +1,11 @@
+﻿@model IndexViewModel
+
+@foreach (var notebook in Model.Notebooks)
+{
+    var selectionClass = Model.SelectedNotebookId == notebook.Id ? "section-item section-item-selected" : "section-item";
+    <a href="javascript:void(0)">
+        <div class="@selectionClass">
+            @notebook.Name
+        </div>
+    </a>
+}

@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using TwoNote.Core.Interfaces;
 using TwoNote.Infrastructure.Data;
+using TwoNote.Infrastructure.Data.Repositories;
 
 namespace TwoNote.Web
 {

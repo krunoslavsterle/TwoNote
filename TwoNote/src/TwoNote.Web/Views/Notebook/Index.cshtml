@@ -2,9 +2,11 @@
     ViewData["Title"] = "Home Page";
 }
 
+@model IndexViewModel
+
 <div class="main-content">
     <div id="notebooks" class="col-md-2 full-height section-base">
-        Notebooks
+        @await Html.PartialAsync("_NotebookSection", Model)
 
         <a href="javascript:void(0)">
             <div class="section-bottom">
@@ -14,7 +16,11 @@
     </div>
 
     <div id="pages" class="col-md-2 full-height section-base">
-        Pages
+
+        @if (Model.SelectedNotebookId.HasValue)
+        {
+            @await Html.PartialAsync("_PageSection", Model.Notebooks.First(p => p.Id == Model.SelectedNotebookId.Value))
+        }
 
         <a href="javascript:void(0)">
             <div class="section-bottom">
@@ -27,3 +33,34 @@
         Edit page content
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+
+            console.log('Index page - ready');
+
+            var notebookId = '@Html.Encode(Model.SelectedNotebookId)';
+            refreshPages(notebookId);
+
+        });
+
+        function refreshPages(notebookId) {
+            if (notebookId) {
+                console.log('refreshing pages for notebook: ' + notebookId);
+
+                $.ajax({
+                    method: "GET",
+                    url: '@Html.Encode(Url.Action("Pages", "Notebook", new { notebookId = Model.SelectedNotebookId.Value }))'
+                })
+                    .done(function (msg) {
+                        console.log('got response: ' + msg);
+                    });
+            }
+           
+        };
+
+    </script>
+
+    
+}

@@ -1,0 +1,11 @@
+﻿@model NotebookViewModel
+
+@foreach (var item in Model.Pages)
+{
+    var selectionClass = Model.SelectedPage == item.Id ? "section-item section-item-selected" : "section-item";
+    <a href="javascript:void(0)">
+        <div class="@selectionClass">
+            @item.Name
+        </div>
+    </a>
+}

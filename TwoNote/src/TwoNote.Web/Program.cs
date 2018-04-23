@@ -20,7 +20,6 @@ namespace TwoNote.Web
                 try
                 {
                     var context = services.GetService<TwoNoteContext>();
-                    context.Database.EnsureDeletedAsync().Wait();
                     context.Database.EnsureCreatedAsync().Wait();
                     DbSeed.SeedAsync(context).Wait();
                 }
