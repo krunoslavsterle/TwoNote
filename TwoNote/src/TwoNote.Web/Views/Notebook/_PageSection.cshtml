@@ -1,11 +1,32 @@
 ﻿@model NotebookViewModel
 
-@foreach (var item in Model.Pages)
-{
-    var selectionClass = Model.SelectedPage == item.Id ? "section-item section-item-selected" : "section-item";
+@{ 
+    PageViewModel selectedPage = Model?.SelectedPage != null ? Model.Pages.First(p => p.Id == Model.SelectedPage.Value) : null;
+}
+
+<div class="col-md-2 full-height section-base">
+
+    @foreach (var item in Model.Pages)
+    {
+        var selectionClass = Model.SelectedPage == item.Id ? "section-item section-item-selected" : "section-item";
+        <a href="javascript:void(0)" onclick="refreshPages('@Model.Id', '@item.Id')">
+            <div class="@selectionClass">
+                @item.Name
+            </div>
+        </a>
+    }
+
     <a href="javascript:void(0)">
-        <div class="@selectionClass">
-            @item.Name
+        <div class="section-bottom">
+            + Page
         </div>
     </a>
-}
+</div>
+
+<div class="col-md-8 full-height">
+    @if (selectedPage != null)
+    {
+        <p>@selectedPage.Content</p>
+    }
+</div>
+

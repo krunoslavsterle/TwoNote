@@ -4,6 +4,10 @@
 
 @model IndexViewModel
 
+@{ 
+    NotebookViewModel selectedNotebook = Model.SelectedNotebookId.HasValue ? Model.Notebooks.First(p => p.Id == Model.SelectedNotebookId.Value) : null;
+}
+
 <div class="main-content">
     <div id="notebooks" class="col-md-2 full-height section-base">
         @await Html.PartialAsync("_NotebookSection", Model)
@@ -15,22 +19,8 @@
         </a>
     </div>
 
-    <div id="pages" class="col-md-2 full-height section-base">
-
-        @if (Model.SelectedNotebookId.HasValue)
-        {
-            @await Html.PartialAsync("_PageSection", Model.Notebooks.First(p => p.Id == Model.SelectedNotebookId.Value))
-        }
-
-        <a href="javascript:void(0)">
-            <div class="section-bottom">
-                + Page
-            </div>
-        </a>
-    </div>
-
-    <div id="editPage" class="col-md-8 full-height">
-        Edit page content
+    <div id="pages" class="full-height">
+        @await Html.PartialAsync("_PageSection", selectedNotebook)
     </div>
 </div>
 
@@ -39,28 +29,40 @@
         $(document).ready(function () {
 
             console.log('Index page - ready');
-
-            var notebookId = '@Html.Encode(Model.SelectedNotebookId)';
-            refreshPages(notebookId);
-
         });
 
-        function refreshPages(notebookId) {
+        function refreshNotebooks(notebookId) {
+            if (notebookId) {
+                console.log('refreshing notebooks selection: ' + notebookId);
+
+                var url = '@Url.Action("Notebook", "Notebook")' + '?notebookId=' + notebookId;
+                $.ajax({
+                    method: "GET",
+                    url: url
+                }).done(function (response) {
+                    $('#notebooks').html(response);
+                    refreshPages(notebookId);
+                });
+            }
+
+        }
+
+        function refreshPages(notebookId, pageId) {
             if (notebookId) {
                 console.log('refreshing pages for notebook: ' + notebookId);
+                console.log('refreshing pages for page: ' + pageId);
+
+                var url = '@Url.Action("Pages", "Notebook")' + '?notebookId=' + notebookId + '&pageId=' + pageId;
 
                 $.ajax({
                     method: "GET",
-                    url: '@Html.Encode(Url.Action("Pages", "Notebook", new { notebookId = Model.SelectedNotebookId.Value }))'
-                })
-                    .done(function (msg) {
-                        console.log('got response: ' + msg);
-                    });
+                    url: url
+                }).done(function (response) {
+                    $('#pages').html(response);
+                });
             }
            
         };
 
     </script>
-
-    
 }

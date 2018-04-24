@@ -31,18 +31,30 @@ namespace TwoNote.Web.Controllers
         }
 
         [HttpGet]
+        [ActionName("Notebook")]
+        public async Task<IActionResult> NotebookPartialAsync(Guid notebookId)
+        {
+            if (notebookId == Guid.Empty) throw new FormatException("Invalid format exception for [notebookId]");
+
+            var notebooks = await notebookRepository.ListAsync();
+            var vm = CreateIndexViewModel(notebooks, notebookId);
+
+            return PartialView("_NotebookSection", vm);
+        }
+
+        [HttpGet]
         [ActionName("Pages")]
-        public async Task<IActionResult> PagesAsync(Guid notebookId)
+        public async Task<IActionResult> PagesPartialAsync(Guid notebookId, Guid? pageId)
         {
             if (notebookId == Guid.Empty) throw new FormatException("Invalid format exception for [notebookId]");
 
             var notebook = await notebookRepository.GetByIdAsync(notebookId, nameof(NotebookEntity.Pages));
-            var vm = MapNotebookEntityToNotebookViewModel(notebook);
+            var vm = MapNotebookEntityToNotebookViewModel(notebook, pageId);
 
             return PartialView("_PageSection", vm);
         }
 
-        private IndexViewModel CreateIndexViewModel(IEnumerable<NotebookEntity> notebookEntities)
+        private IndexViewModel CreateIndexViewModel(IEnumerable<NotebookEntity> notebookEntities, Guid? notebookId = null)
         {
             var notebooks = new List<NotebookViewModel>();
             if (notebookEntities != null && notebookEntities.Count() > 0)
@@ -54,13 +66,13 @@ namespace TwoNote.Web.Controllers
             var vm = new IndexViewModel
             {
                 Notebooks = notebooks,
-                SelectedNotebookId = notebooks.FirstOrDefault()?.Id
+                SelectedNotebookId = notebookId ?? notebooks.FirstOrDefault()?.Id
             };
 
             return vm;
         }
 
-        private NotebookViewModel MapNotebookEntityToNotebookViewModel(NotebookEntity entity)
+        private NotebookViewModel MapNotebookEntityToNotebookViewModel(NotebookEntity entity, Guid? selectedPage = null)
         {
             var pages = new List<PageViewModel>();
             if (entity.Pages != null && entity.Pages.Count() > 0)
@@ -74,7 +86,7 @@ namespace TwoNote.Web.Controllers
                 Id = entity.Id,
                 Name = entity.Name,
                 Pages = pages,
-                SelectedPage = pages.FirstOrDefault()?.Id
+                SelectedPage = selectedPage ?? pages.FirstOrDefault()?.Id
             };
 
             return vm;
