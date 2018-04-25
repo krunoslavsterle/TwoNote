@@ -4,13 +4,15 @@
 
 @model IndexViewModel
 
-@{ 
+@{
     NotebookViewModel selectedNotebook = Model.SelectedNotebookId.HasValue ? Model.Notebooks.First(p => p.Id == Model.SelectedNotebookId.Value) : null;
 }
 
 <div class="main-content">
-    <div id="notebooks" class="col-md-2 full-height section-base">
-        @await Html.PartialAsync("_NotebookSection", Model)
+    <div class="col-md-2 full-height section-base">
+        <div id="notebooks" class="full-height">
+            @await Html.PartialAsync("_NotebookSection", Model)
+        </div>
 
         <a href="javascript:void(0)">
             <div class="section-bottom">
@@ -25,10 +27,18 @@
 </div>
 
 @section Scripts {
+
+    <!-- Main Quill library -->
+    <script src="//cdn.quilljs.com/1.3.6/quill.js"></script>
+    <script src="//cdn.quilljs.com/1.3.6/quill.min.js"></script>
+
     <script>
+
         $(document).ready(function () {
 
             console.log('Index page - ready');
+            instantiateEditor();
+            
         });
 
         function refreshNotebooks(notebookId) {
@@ -59,10 +69,25 @@
                     url: url
                 }).done(function (response) {
                     $('#pages').html(response);
+                    instantiateEditor();
                 });
             }
-           
+
         };
+
+        function instantiateEditor() {
+
+            var BackgroundClass = Quill.import('attributors/class/background');
+            var ColorClass = Quill.import('attributors/class/color');
+            Quill.register(BackgroundClass, true);
+            Quill.register(ColorClass, true);
+
+            var quill = new Quill('#editor-container', {
+
+                placeholder: 'Compose an epic...',
+                theme: 'snow'
+            });
+        }
 
     </script>
 }

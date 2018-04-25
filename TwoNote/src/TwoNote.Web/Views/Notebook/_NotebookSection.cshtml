@@ -3,9 +3,22 @@
 @foreach (var notebook in Model.Notebooks)
 {
     var selectionClass = Model.SelectedNotebookId == notebook.Id ? "section-item section-item-selected" : "section-item";
-    <a href="javascript:void(0)" onclick="refreshNotebooks('@notebook.Id')">
-        <div class="@selectionClass">
-            @notebook.Name
+   
+    <div class="@selectionClass row">
+        <div class="col-md-11 full-height" style="padding-left:10px; cursor: pointer;" onclick="refreshNotebooks('@notebook.Id')">
+            <h4>@notebook.Name</h4>
         </div>
-    </a>
+        <div class="col-md-1">
+            <div class="dropdown">
+                <button id="dLabel" class="btn btn-sm section-menu-btn" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="background-color:transparent;">
+                    <span class="glyphicon glyphicon-option-vertical" style="font-size:19px; padding-top: 10px; padding-bottom: 10px;" aria-hidden="true"></span>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dLabel">
+                    <li><a href="javascript:void(0)">Rename</a></li>
+                    <li><a href="javascript:void(0)">Delete</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
 }

@@ -9,11 +9,23 @@
     @foreach (var item in Model.Pages)
     {
         var selectionClass = Model.SelectedPage == item.Id ? "section-item section-item-selected" : "section-item";
-        <a href="javascript:void(0)" onclick="refreshPages('@Model.Id', '@item.Id')">
-            <div class="@selectionClass">
-                @item.Name
+
+        <div class="@selectionClass row">
+            <div class="col-md-11 full-height" style="padding-left:10px; cursor: pointer;" onclick="refreshPages('@Model.Id', '@item.Id')">
+                <h4>@item.Name</h4>
             </div>
-        </a>
+            <div class="col-md-1">
+                <div class="dropdown">
+                    <button id="dLabel" class="btn btn-sm section-menu-btn" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="background-color:transparent;">
+                        <span class="glyphicon glyphicon-option-vertical" style="font-size:19px; padding-top: 10px; padding-bottom: 10px;" aria-hidden="true"></span>
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dLabel">
+                        <li><a href="javascript:void(0)">Rename</a></li>
+                        <li><a href="javascript:void(0)">Delete</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
     }
 
     <a href="javascript:void(0)">
@@ -24,9 +36,11 @@
 </div>
 
 <div class="col-md-8 full-height">
-    @if (selectedPage != null)
-    {
-        <p>@selectedPage.Content</p>
-    }
+    <div id="editor-container">
+        @if (selectedPage != null)
+        {
+            <p>@selectedPage.Content</p>
+         }
+    </div>
 </div>
 
