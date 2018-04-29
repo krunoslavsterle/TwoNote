@@ -10,7 +10,12 @@
     {
         var selectionClass = Model.SelectedPage == item.Id ? "section-item section-item-selected" : "section-item";
 
-        <div class="@selectionClass row">
+        @if(Model.SelectedPage == item.Id)
+        {
+            <input name="selected-page" type="hidden" value="@item.Id" />
+        }
+
+        <div id="page-@item.Id" class="@selectionClass row">
             <div class="col-md-11 full-height" style="padding-left:10px; cursor: pointer;" onclick="refreshPages('@Model.Id', '@item.Id')">
                 <h4>@item.Name</h4>
             </div>
@@ -21,14 +26,14 @@
                     </button>
                     <ul class="dropdown-menu" aria-labelledby="dLabel">
                         <li><a href="javascript:void(0)">Rename</a></li>
-                        <li><a href="javascript:void(0)">Delete</a></li>
+                        <li><a href="javascript:void(0)" onclick="deletePage('@item.Id')">Delete</a></li>
                     </ul>
                 </div>
             </div>
         </div>
     }
 
-    <a href="javascript:void(0)">
+    <a href="javascript:void(0)" data-toggle="modal" data-target="#new-page-modal">
         <div class="section-bottom">
             + Page
         </div>
@@ -37,10 +42,7 @@
 
 <div class="col-md-8 full-height">
     <div id="editor-container">
-        @if (selectedPage != null)
-        {
-            <p>@selectedPage.Content</p>
-         }
+       
     </div>
 </div>
 

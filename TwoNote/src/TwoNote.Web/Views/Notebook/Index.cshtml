@@ -14,7 +14,7 @@
             @await Html.PartialAsync("_NotebookSection", Model)
         </div>
 
-        <a href="javascript:void(0)">
+        <a href="javascript:void(0)" data-toggle="modal" data-target="#new-notebook-modal">
             <div class="section-bottom">
                 + Notebook
             </div>
@@ -23,6 +23,29 @@
 
     <div id="pages" class="full-height">
         @await Html.PartialAsync("_PageSection", selectedNotebook)
+    </div>
+</div>
+
+<div id="new-notebook-modal" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="gridSystemModalLabel">Add Notebook</h4>
+            </div>
+
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="recipient-name" class="control-label">Notebook name:</label>
+                    <input type="text" class="form-control" id="new-notebook-name">
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="saveNewNotebook();">Send message</button>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -38,7 +61,6 @@
 
             console.log('Index page - ready');
             instantiateEditor();
-            
         });
 
         function refreshNotebooks(notebookId) {
@@ -54,7 +76,6 @@
                     refreshPages(notebookId);
                 });
             }
-
         }
 
         function refreshPages(notebookId, pageId) {
@@ -87,6 +108,153 @@
                 placeholder: 'Compose an epic...',
                 theme: 'snow'
             });
+
+            var selectedPageId = $('[name="selected-page"]').val();
+            if (selectedPageId) {
+
+                var url = '@Url.Action("GetPageContent", "Notebook")' + '?pageId=' + selectedPageId;
+
+                $.ajax({
+                    method: "GET",
+                    url: url,
+                    success: function (response) {
+                        if (response) {
+                            quill.setContents(JSON.parse(response));
+                        }
+
+                        var timer;
+                        var delay = 600; // 0.6 seconds delay after last input
+                        quill.on('text-change', function (delta, source) {
+                            window.clearTimeout(timer);
+                            timer = window.setTimeout(function () {
+                                var contents = JSON.stringify(quill.getContents());
+                                console.log(contents);
+                                updatePageContent(contents, selectedPageId);
+                            }, delay);
+                        });
+                    },
+                    error: function (response) {
+                        console.log(response);
+                        alert("error updating page content");
+                    }
+                 });
+
+            }
+        }
+
+        function getPageContent(selectedPageId) {
+
+            
+        }
+
+        function updatePageContent(content, selectedPageId) {
+            var url = '@Url.Action("UpdatePage", "Notebook")';
+                
+                $.ajax({
+                    method: "POST",
+                    url: url,
+                    data: { 'pageId': selectedPageId, 'content': content },
+                    success: function (response) {
+                        console.log('success');
+                    },
+                    error: function (response) {
+                        console.log(response);
+                        alert("error updating page content");
+                    }
+                });
+        }
+
+        function saveNewPage(notebookId) {
+            var pageName = $('#new-page-name').val();
+            if (notebookId && pageName) {
+                var url = '@Url.Action("NewPage", "Notebook")';
+
+                $.ajax({
+                    method: "POST",
+                    url: url,
+                    data: { 'notebookId': notebookId, 'pageName': pageName },
+                    success: function (response) {
+                        if (response.success) {
+                            $('#new-page-modal').modal('hide');
+                            refreshPages(notebookId, response.responseText);
+                        } else {
+                            // DoSomethingElse()
+                            alert(response.responseText);
+                        }
+                    },
+                    error: function (response) {
+                        console.log(response);
+                        alert("error adding new notebook");
+                    }
+                });
+            }
+        }
+
+        function saveNewNotebook() {
+            var notebookName = $('#new-notebook-name').val();
+            if (notebookName) {
+
+                var url = '@Url.Action("NewNotebook", "Notebook")';
+
+                $.ajax({
+                    method: "POST",
+                    url: url,
+                    data: { 'notebookName': notebookName },                                  
+                    success: function (response) {
+                        if (response.success) {
+                            $('#new-notebook-modal').modal('hide');                            
+                            refreshNotebooks(response.responseText);
+                        } else {
+                            // DoSomethingElse()
+                            alert(response.responseText);
+                        }
+                    },
+                    error: function (response) {
+                        console.log(response);
+                        alert("error adding new notebook");
+                    }
+                });
+            }
+        }
+
+        function deleteNotebook(notebookId) {
+            if (notebookId) {
+                var url = '@Url.Action("DeleteNotebook", "Notebook")';
+
+                $.ajax({
+                    method: "POST",
+                    url: url,
+                    data: { 'notebookId': notebookId },
+                    success: function (response) {
+                        $("#notebook-" + notebookId).remove();
+                    },
+                    error: function (response) {
+                        console.log(response);
+                        alert("error adding new notebook");
+                    }
+                });
+            }
+
+        }
+
+        function deletePage(pageId) {
+            if (pageId) {
+                var url = '@Url.Action("DeletePage", "Notebook")';
+
+                $.ajax({
+                    method: "POST",
+                    url: url,
+                    data: { 'pageId': pageId },
+                    success: function (response) {
+                        $("#page-" + pageId).remove();
+                    },
+                    error: function (response) {
+                        console.log(response);
+                        alert("error deleting page");
+                    }
+                });
+            }
+
         }
 
     </script>
