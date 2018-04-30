@@ -1,9 +1,11 @@
 ﻿using System;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using TwoNote.Infrastructure.Data;
+using TwoNote.Infrastructure.Identity;
 
 namespace TwoNote.Web
 {
@@ -19,9 +21,13 @@ namespace TwoNote.Web
 
                 try
                 {
+                    // TwoNoteContext Seed.
                     var context = services.GetService<TwoNoteContext>();
-                    context.Database.EnsureCreatedAsync().Wait();
                     DbSeed.SeedAsync(context).Wait();
+
+                    // AppIdentityDbContext Seed.
+                    var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
+                    AppIdentityDbContextSeed.SeedAsync(userManager).Wait();
                 }
                 catch (Exception ex)
                 {

@@ -6,8 +6,8 @@ namespace TwoNote.Infrastructure.Data
     public class TwoNoteContext : DbContext
     {
         #region Constructors
-
-        public TwoNoteContext(DbContextOptions options)
+        
+        public TwoNoteContext(DbContextOptions<TwoNoteContext> options)
             : base(options)
         {
         }

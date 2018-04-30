@@ -1,11 +1,15 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using TwoNote.Core.Interfaces;
 using TwoNote.Infrastructure.Data;
 using TwoNote.Infrastructure.Data.Repositories;
+using TwoNote.Infrastructure.Identity;
 
 namespace TwoNote.Web
 {
@@ -21,11 +25,28 @@ namespace TwoNote.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<TwoNoteContext>(options => 
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
+            //Add Identity DbContext
+            services.AddDbContext<AppIdentityDbContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
+            services.AddIdentity<ApplicationUser, ApplicationRole>()
+                .AddEntityFrameworkStores<AppIdentityDbContext>()
+                .AddDefaultTokenProviders();
+
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.Cookie.HttpOnly = true;
+                options.ExpireTimeSpan = TimeSpan.FromHours(1);
+                options.LoginPath = "/Account/Signin";
+                options.LogoutPath = "/Account/Signout";
+            });
+
             services.AddMvc()
                 .AddControllersAsServices();
 
-            services.AddDbContext<TwoNote.Infrastructure.Data.TwoNoteContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-            
             // Register dependencies. 
             services.AddScoped(typeof(IRepository<>), typeof(EfGenericRepository<>));
         }
@@ -44,7 +65,7 @@ namespace TwoNote.Web
             }
 
             app.UseStaticFiles();
-
+            app.UseAuthentication();
             app.UseMvc(routes =>
             {
                 routes.MapRoute(

@@ -6,9 +6,11 @@ using TwoNote.Core.Entities;
 using TwoNote.Core.Interfaces;
 using TwoNote.Web.Models;
 using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 
 namespace TwoNote.Web.Controllers
 {
+    [Authorize]
     public class NotebookController : Controller
     {
         private readonly IRepository<NotebookEntity> notebookRepository;
