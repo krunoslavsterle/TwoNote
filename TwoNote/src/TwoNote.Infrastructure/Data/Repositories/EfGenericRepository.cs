@@ -12,7 +12,7 @@ namespace TwoNote.Infrastructure.Data.Repositories
     {
         #region Fields
 
-        private readonly TwoNoteContext dbContext;
+        protected readonly TwoNoteContext dbContext;
 
         #endregion Fields
 
@@ -63,7 +63,7 @@ namespace TwoNote.Infrastructure.Data.Repositories
             return dbContext.SaveChangesAsync();
         }
 
-        private void OnIncludeProperties(ref IQueryable<T> query, params string[] includeProperties)
+        protected void OnIncludeProperties(ref IQueryable<T> query, params string[] includeProperties)
         {
             if (includeProperties != null)
             {

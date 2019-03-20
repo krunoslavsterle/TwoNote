@@ -9,10 +9,20 @@ using TwoNote.Core.Interfaces;
 
 namespace TwoNote.Infrastructure.Data.Repositories
 {
-    public class EfNotebookRepository : EfGenericRepository<NotebookEntity>
+    public class EfNotebookRepository : EfGenericRepository<NotebookEntity>, INotebookRepository
     {
         public EfNotebookRepository(TwoNoteContext dbContext) : base(dbContext)
         {
+            
+        }
+
+        public Task<List<NotebookEntity>> ListNotebooksForUserAsync(Guid userId, params string[] includeProperties)
+        {
+            var query = dbContext.Set<NotebookEntity>().AsQueryable();
+            query = query.Where(p => p.UserId == userId);
+            OnIncludeProperties(ref query, includeProperties);
+
+            return query.ToListAsync();
         }
     }
 }

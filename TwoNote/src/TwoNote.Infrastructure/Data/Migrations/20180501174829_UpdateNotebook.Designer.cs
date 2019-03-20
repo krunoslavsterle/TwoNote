@@ -11,9 +11,10 @@ using TwoNote.Infrastructure.Data;
 namespace TwoNote.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(TwoNoteContext))]
-    partial class TwoNoteContextModelSnapshot : ModelSnapshot
+    [Migration("20180501174829_UpdateNotebook")]
+    partial class UpdateNotebook
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

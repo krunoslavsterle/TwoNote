@@ -49,6 +49,7 @@ namespace TwoNote.Web
 
             // Register dependencies. 
             services.AddScoped(typeof(IRepository<>), typeof(EfGenericRepository<>));
+            services.AddScoped(typeof(INotebookRepository), typeof(EfNotebookRepository));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

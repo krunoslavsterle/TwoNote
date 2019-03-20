@@ -7,26 +7,31 @@ using TwoNote.Core.Interfaces;
 using TwoNote.Web.Models;
 using System.Linq;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using TwoNote.Infrastructure.Identity;
 
 namespace TwoNote.Web.Controllers
 {
     [Authorize]
     public class NotebookController : Controller
     {
-        private readonly IRepository<NotebookEntity> notebookRepository;
+        private readonly INotebookRepository notebookRepository;
         private readonly IRepository<PageEntity> pageRepository;
-
-        public NotebookController(IRepository<NotebookEntity> notebookRepository, IRepository<PageEntity> pageRepository)
+        private readonly UserManager<ApplicationUser> userManager;
+        
+        public NotebookController(INotebookRepository notebookRepository, IRepository<PageEntity> pageRepository, UserManager<ApplicationUser> userManager)
         {
             this.notebookRepository = notebookRepository;
             this.pageRepository = pageRepository;
+            this.userManager = userManager;
         }
 
         [HttpGet]
         [ActionName("Index")]
         public async Task<IActionResult> IndexAsync()
         {
-            var notebooks = await notebookRepository.ListAsync(nameof(NotebookEntity.Pages));
+            var Id = userManager.GetUserId(this.User);
+            var notebooks = await notebookRepository.ListNotebooksForUserAsync(new Guid(Id), (nameof(NotebookEntity.Pages)));
             var vm = CreateIndexViewModel(notebooks);
 
             return View("Index", vm);
@@ -38,7 +43,8 @@ namespace TwoNote.Web.Controllers
         {
             if (notebookId == Guid.Empty) throw new FormatException("Invalid format exception for [notebookId]");
 
-            var notebooks = await notebookRepository.ListAsync();
+            var Id = userManager.GetUserId(this.User);
+            var notebooks = await notebookRepository.ListNotebooksForUserAsync(new Guid(Id));
             var vm = CreateIndexViewModel(notebooks, notebookId);
 
             return PartialView("_NotebookSection", vm);
@@ -50,9 +56,11 @@ namespace TwoNote.Web.Controllers
         {
             if (String.IsNullOrEmpty(notebookName)) throw new ArgumentNullException("[notebookName] is null or empty.");
 
+            var userId = userManager.GetUserId(this.User);
             var entity = new NotebookEntity()
             {
                 Id = Guid.NewGuid(),
+                UserId = new Guid(userId),
                 Name = notebookName,
                 DateCreated = DateTime.UtcNow,
                 DateUpdated = DateTime.UtcNow
