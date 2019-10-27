@@ -1,0 +1,83 @@
+﻿html, body {
+    height: 100%;
+    padding-top: 0px;
+}
+
+/* Wrapping element */
+/* Set some basic padding to keep content from hitting the edges */
+.body-content {
+ 
+}
+
+.main-content {
+    height: 100%;
+    min-height: 100%;
+}
+
+.col-lg-12,
+.col-md-1,
+.col-md-11,
+.col-md-8,
+.col-md-10,
+.col-md-2 {
+    padding: 0;
+}
+
+.btn-sm {
+    padding:0;
+}
+
+.row {
+    margin: 0;
+}
+
+.full-height {
+    height: inherit;
+}
+
+/*box-shadow: [horizontal offset] [vertical offset] [blur radius] [color];*/
+.section-base {
+    box-shadow: 1px 0px 3px rgba(0, 0, 0, 0.2);
+}
+
+.section-bottom {
+    font-size: 17px;
+    padding: 8px;
+    position: absolute;
+    width: 100%;
+    bottom: 0;
+    left: 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.section-item {
+    font-size: 16px;
+}
+
+.section-item-selected {
+    background-color: hsla(210, 38%, 73%, 0.4);
+}
+
+.ql-toolbar.ql-snow {
+    box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.2);
+    border: 0px solid tomato;
+}
+
+.ql-container.ql-snow {
+    border: 0px solid tomato;
+}
+
+.ql-container.ql-snow {
+    border: 0px solid tomato;
+}
+
+.ql-container{
+    height: 90%;
+}
+/* Hide/rearrange for smaller screens */
+@media screen and (max-width: 767px) {
+    /* Hide captions */
+    .carousel-caption {
+        display: none;
+    }
+}
